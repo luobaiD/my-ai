@@ -188,7 +188,7 @@ const IDcheck = async (userId:any, data:any) => {
         date: '',
         content: [
           {role:'我', content: inputData.value},
-          {role:'deepseek'}
+          {role:'deepseek', reasoning: '', content: ''}
         ]
       }
       HistoryStore.setUnshiftData(newData)
@@ -212,7 +212,7 @@ const IDcheck = async (userId:any, data:any) => {
       const res = await chat(parameter)
       
       HistoryStore.setHistoryList('newCount',HistoryStore.getHistoryIndex(), {role:'我', content: inputData.value})
-      HistoryStore.setHistoryList('newCount',HistoryStore.getHistoryIndex(), {role:'deepseek'})
+      HistoryStore.setHistoryList('newCount',HistoryStore.getHistoryIndex(), {role:'deepseek', reasoning: '', content: ''})
     } catch {
       console.log('发送失败'); 
     }

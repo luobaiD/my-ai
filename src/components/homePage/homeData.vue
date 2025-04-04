@@ -50,6 +50,7 @@ import { ref, computed, onMounted, nextTick, watch} from 'vue';
 import { useRoute } from 'vue-router';
 import hljs from 'highlight.js';
 import { UseHistoryStore } from '@/stores/chatData'
+import type { HistoryKey } from '@/stores/chatData'
 
 const HistoryStore = UseHistoryStore()
 
@@ -159,8 +160,8 @@ watch(()=>{
   return HistoryStore.getHistoryIndex()
 }, () => {  
   const index = HistoryStore.getHistoryIndex().split('-')
-  let historyList:any = HistoryStore.getHistoryList()
-  countent.value = historyList[index[0]].list[index[1]]
+  let historyList = HistoryStore.getHistoryList()
+  countent.value = historyList[index[0] as HistoryKey].list[Number(index[1])]
 },{
   deep: true,
   immediate: true

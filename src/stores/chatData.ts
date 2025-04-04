@@ -5,11 +5,16 @@ import Utils from '@/Utils/Utils';
 
 
 //#region 类型定义
-type HistoryKey = 'today' | 'yesterday' | 'thisWeek' | 'more'; // 合法的键名类型
-type HistoryItem = {
+export type HistoryKey = 'today' | 'yesterday' | 'thisWeek' | 'more'; // 合法的键名类型
+export type HistoryItem = {
     title: string;
     boolean: ComputedRef<any> | any;
     list: any[]; // 根据实际情况替换 any
+};
+export type ChatContentItem = {
+  role: string;
+  reasoning?: string;
+  content?: string;
 };
 //#endregion
 
@@ -44,11 +49,8 @@ export const UseHistoryStore = defineStore('History', () => {
   //#endregion
 
   //#region 读取侧边栏数据函数
-  const getHistoryList = (date?:any) => {
-    if (!date) {
+  const getHistoryList = () => {
       return historyList.value
-    }
-    return historyList.value[date as HistoryKey] 
   }
   const getHistoryIndex = () => {
     return historyIndex.value
@@ -61,6 +63,7 @@ export const UseHistoryStore = defineStore('History', () => {
    * @param type 修改类型
    *  - add: 为today中首位添加数据 |  发送框创建新的聊天
    *  - newCount: 为数据中对应索引的content部分添加数据 
+   *  - reasoning: 为数据中对应索引的content部分中每个role为deepseek的数据添加内容
    *  - fill: 为数据中对应索引的content部分最后一个数据添加内容
    *  - delete: 删除数据 |  删除会话
    * @param data 修改的数据
@@ -118,5 +121,7 @@ export const UseHistoryStore = defineStore('History', () => {
   //#endregion
   
   
-  return { historyIndex, getHistoryList, getHistoryIndex, setHistoryIndex, setHistoryList, setUnshiftData, setischat }
+  return { 
+    historyIndex, getHistoryList, getHistoryIndex, setHistoryIndex, setHistoryList, setUnshiftData, setischat 
+  }
 })

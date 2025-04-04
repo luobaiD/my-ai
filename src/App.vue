@@ -18,8 +18,8 @@ import { getChat } from '@/api/login/chat';
 const HistoryStore = UseHistoryStore()
 
 const getHistoryData = async () => {
-const query = encodeURIComponent(user_id.value);
-const data = await getChat(query)
+  const query = encodeURIComponent(user_id.value);
+  const data = await getChat(query)
   // 清空历史数据
   HistoryStore.setHistoryList('delete','today')
   HistoryStore.setHistoryList('delete','yesterday')
@@ -55,7 +55,7 @@ onMounted(async() => {
 
   // 当接收到'start'事件时，打印会话ID
   sse.on('start', (data) => {
-    console.log('开始');
+    console.log('开始',data);
     HistoryStore.setischat(true)
   })
 
@@ -73,7 +73,7 @@ onMounted(async() => {
   sse.on('content', (data) => {
     const put = {
       type:'content',
-      content: JSON.parse(data).Stream? JSON.parse(data).Stream : ''
+      content: JSON.parse(data).Stream
     }
     HistoryStore.setHistoryList('fill',HistoryStore.getHistoryIndex(), put)
   })

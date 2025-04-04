@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar-whole" >
       <!-- 展开状态 -->
-      <div v-if="sidebarShow" class="expand sidebar-content">
+      <div v-show="sidebarShow" class="expand sidebar-content">
         <!-- logo及收缩 -->
         <div class="header-logo">
           <div class="logo-svg">
@@ -20,34 +20,44 @@
         </div>
         <!-- 历史记录 -->
         <div class="record">
-          <div class="no-history" v-if="!historyshow">
+          <div class="no-history" v-if="!historyshow()">
             暂无历史对话
           </div>
-          <div class="history" v-if="historyshow">
-            <div v-for="(i,num) in historyList" class="group" >
-              <div v-if="i.list.length">
+          <div class="history" v-if="historyshow()">
+            <div v-for="(i,num) in historyList" class="group">
+              <div v-if="i.list.length > 0" >
                 <div class="title">{{ i.title }}</div>
-                <div class="span" v-for="(item,index) in i.list" @click.stop.prevent="historySelect({item, index, num})" :class="{select: HistoryStore.historyIndex == `${num}-${index}`}">
+                <div class="span" v-for="(item,index) in i.list" @click="historySelect({item, index, num})" :class="{select: HistoryStore.historyIndex == `${num}-${index}`}">
                   <span>{{ item.title }}</span>
-                  <div class="operation" @click.stop="operationbt(item, index)"><div class="ds-icon" style="font-size: 16px; width: 16px; height: 16px;"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M3 12a2 2 0 1 1 4 0 2 2 0 0 1-4 0m7 0a2 2 0 1 1 4 0 2 2 0 0 1-4 0m7 0a2 2 0 1 1 4 0 2 2 0 0 1-4 0" clip-rule="evenodd"></path></svg></div></div>
-                  <!-- 重新命名及删除 -->
-                  <div class="method" v-if="item.operation && operationshow === index">
-                    <div class="name" @click="rename(item, num, index)">
-                      <div class="ds-icon" style="font-size: 24px; width: 24px; height: 24px;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.2286 18.25H3.77142C3.34538 18.25 3 18.5954 3 19.0214C3 19.4475 3.34538 19.7928 3.77142 19.7928H20.2286C20.6546 19.7928 21 19.4475 21 19.0214C21 18.5954 20.6546 18.25 20.2286 18.25Z" fill="currentColor"></path><mask id="mask0_1954_727" maskUnits="userSpaceOnUse" x="3" y="2" width="15" height="15"><path d="M17.1429 2H3V16.1428H17.1429V2Z" fill="white"></path></mask><g mask="url(#mask0_1954_727)"><path d="M4.48999 16.14C4.36999 16.14 4.26002 16.12 4.15002 16.1C4.04002 16.07 3.94003 16.03 3.84003 15.98C3.73003 15.93 3.63999 15.88 3.54999 15.8C3.45999 15.73 3.39001 15.65 3.32001 15.56C3.25001 15.48 3.19001 15.38 3.14001 15.28C3.09001 15.18 3.05003 15.07 3.03003 14.96C3.01003 14.85 3 14.74 3 14.62C3 14.51 3.00998 14.4 3.03998 14.29L3.75 11.33C3.9 10.71 4.20001 10.18 4.64001 9.73L11.4 2.98C11.55 2.82 11.72 2.68 11.91 2.56C12.09 2.44 12.28 2.34 12.49 2.25C12.69 2.17 12.9 2.1 13.12 2.06C13.33 2.02 13.55 2 13.77 2C14 2 14.21 2.02 14.43 2.06C14.65 2.1 14.86 2.17 15.06 2.25C15.27 2.34 15.46 2.44 15.64 2.56C15.83 2.68 16 2.82 16.15 2.98C16.31 3.14 16.45 3.31001 16.57 3.49001C16.69 3.67001 16.79 3.87001 16.88 4.07001C16.96 4.27001 17.03 4.49 17.07 4.7C17.11 4.92 17.13 5.14 17.13 5.36C17.13 5.58 17.11 5.79999 17.07 6.00999C17.03 6.22999 16.96 6.44 16.88 6.64C16.79 6.85 16.69 7.04 16.57 7.22C16.45 7.41 16.31 7.58 16.15 7.73L9.40002 14.49C8.95002 14.94 8.42 15.23 7.81 15.38L4.84003 16.09C4.73003 16.12 4.60999 16.14 4.48999 16.14ZM13.67 3.63C13.22 3.66 12.84 3.84 12.52 4.16L5.78998 10.89C5.55998 11.12 5.41002 11.39 5.33002 11.71L4.66998 14.46L7.42999 13.8C7.73999 13.72 8.02 13.57 8.25 13.34L15 6.58C15.08 6.5 15.15 6.42001 15.22 6.32001C15.28 6.23001 15.33 6.13 15.38 6.02C15.42 5.92 15.45 5.81 15.47 5.7C15.5 5.58 15.51 5.47 15.51 5.36C15.51 5.24 15.5 5.13 15.47 5.02C15.45 4.91 15.42 4.8 15.38 4.69C15.33 4.59 15.28 4.49 15.22 4.39C15.15 4.3 15.08 4.21 15 4.13C14.82 3.96 14.62 3.82001 14.39 3.74001C14.16 3.65001 13.91 3.61 13.67 3.63Z" fill="currentColor"></path></g></svg>
-                      </div>
-                      <div class="label">重命名</div>
-                    </div>
-                    <div class="delete" @click="deletebt(item, num, index)">
-                      <div class="ds-icon" style="font-size: 24px; width: 24px; height: 24px;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.3948 8.24785C5.89262 8.21027 6.32593 8.58498 6.36058 9.083L6.91194 17.0084V17.0423C6.91194 18.562 8.1119 19.8099 9.60009 19.8099H14.4119C15.905 19.8099 17.1001 18.563 17.1001 17.0423V17.009L17.6407 9.08428C17.6747 8.58626 18.1074 8.21098 18.6053 8.24783C19.099 8.28438 19.4706 8.71284 19.4369 9.20682L18.9 17.0774C18.8817 19.6322 16.8736 21.6849 14.4119 21.6849H9.60009C7.14544 21.6849 5.13073 19.6335 5.11207 17.0781L4.56455 9.20795C4.53019 8.71406 4.90112 8.28511 5.3948 8.24785Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M21 5.75C21 6.26777 20.5803 6.6875 20.0625 6.6875H3.9375C3.41973 6.6875 3 6.26777 3 5.75C3 5.23223 3.41973 4.8125 3.9375 4.8125H20.0625C20.5803 4.8125 21 5.23223 21 5.75Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M10.2 10.75C10.6971 10.75 11.1 11.1529 11.1 11.65L11.1 16.1C11.1 16.5971 10.6971 17 10.2 17C9.70299 17 9.30005 16.5971 9.30005 16.1L9.30005 11.65C9.30005 11.1529 9.70299 10.75 10.2 10.75Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M13.7999 10.75C14.297 10.75 14.6999 11.1529 14.6999 11.65L14.6999 16.1C14.6999 16.5971 14.297 17 13.7999 17C13.3028 17 12.8999 16.5971 12.8999 16.1L12.8999 11.65C12.8999 11.1529 13.3028 10.75 13.7999 10.75Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M9.37093 2.87988C9.53733 2.5331 9.88788 2.3125 10.2725 2.3125H13.7269C14.1114 2.3125 14.462 2.53305 14.6284 2.87977L15.8048 5.33074L14.1949 6.16926L13.2436 4.1875H10.7558L9.80489 6.16916L8.19482 5.33084L9.37093 2.87988Z" fill="currentColor"></path></svg>
-                      </div>
-                      <div class="label">删除</div>
-                    </div>
+                  <div class="operation" 
+                      @click="operationbt(item, `${num}-${index}`)" 
+                      :ref="el => setOperationRef(el, item.id)"
+                      :style="{display: HistoryStore.historyIndex == `${num}-${index}`? 'flex' : 'none'}">
+                      <div class="ds-icon" style="font-size: 16px; width: 16px; height: 16px;"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M3 12a2 2 0 1 1 4 0 2 2 0 0 1-4 0m7 0a2 2 0 1 1 4 0 2 2 0 0 1-4 0m7 0a2 2 0 1 1 4 0 2 2 0 0 1-4 0" clip-rule="evenodd"></path></svg></div>
                   </div>
+                  <teleport to=".record"> 
+                    <div class="method" 
+                        v-if="item.operation && operationshow === `${num}-${index}`" 
+                        :style="getMethodStyle(item.id)" 
+                        :data-id="item.id"
+                        :ref="el => setMethodRef(el, item.id)">
+                      <div class="name" @click="rename(item, num, index)">
+                        <div class="ds-icon" style="font-size: 24px; width: 24px; height: 24px;">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.2286 18.25H3.77142C3.34538 18.25 3 18.5954 3 19.0214C3 19.4475 3.34538 19.7928 3.77142 19.7928H20.2286C20.6546 19.7928 21 19.4475 21 19.0214C21 18.5954 20.6546 18.25 20.2286 18.25Z" fill="currentColor"></path><mask id="mask0_1954_727" maskUnits="userSpaceOnUse" x="3" y="2" width="15" height="15"><path d="M17.1429 2H3V16.1428H17.1429V2Z" fill="white"></path></mask><g mask="url(#mask0_1954_727)"><path d="M4.48999 16.14C4.36999 16.14 4.26002 16.12 4.15002 16.1C4.04002 16.07 3.94003 16.03 3.84003 15.98C3.73003 15.93 3.63999 15.88 3.54999 15.8C3.45999 15.73 3.39001 15.65 3.32001 15.56C3.25001 15.48 3.19001 15.38 3.14001 15.28C3.09001 15.18 3.05003 15.07 3.03003 14.96C3.01003 14.85 3 14.74 3 14.62C3 14.51 3.00998 14.4 3.03998 14.29L3.75 11.33C3.9 10.71 4.20001 10.18 4.64001 9.73L11.4 2.98C11.55 2.82 11.72 2.68 11.91 2.56C12.09 2.44 12.28 2.34 12.49 2.25C12.69 2.17 12.9 2.1 13.12 2.06C13.33 2.02 13.55 2 13.77 2C14 2 14.21 2.02 14.43 2.06C14.65 2.1 14.86 2.17 15.06 2.25C15.27 2.34 15.46 2.44 15.64 2.56C15.83 2.68 16 2.82 16.15 2.98C16.31 3.14 16.45 3.31001 16.57 3.49001C16.69 3.67001 16.79 3.87001 16.88 4.07001C16.96 4.27001 17.03 4.49 17.07 4.7C17.11 4.92 17.13 5.14 17.13 5.36C17.13 5.58 17.11 5.79999 17.07 6.00999C17.03 6.22999 16.96 6.44 16.88 6.64C16.79 6.85 16.69 7.04 16.57 7.22C16.45 7.41 16.31 7.58 16.15 7.73L9.40002 14.49C8.95002 14.94 8.42 15.23 7.81 15.38L4.84003 16.09C4.73003 16.12 4.60999 16.14 4.48999 16.14ZM13.67 3.63C13.22 3.66 12.84 3.84 12.52 4.16L5.78998 10.89C5.55998 11.12 5.41002 11.39 5.33002 11.71L4.66998 14.46L7.42999 13.8C7.73999 13.72 8.02 13.57 8.25 13.34L15 6.58C15.08 6.5 15.15 6.42001 15.22 6.32001C15.28 6.23001 15.33 6.13 15.38 6.02C15.42 5.92 15.45 5.81 15.47 5.7C15.5 5.58 15.51 5.47 15.51 5.36C15.51 5.24 15.5 5.13 15.47 5.02C15.45 4.91 15.42 4.8 15.38 4.69C15.33 4.59 15.28 4.49 15.22 4.39C15.15 4.3 15.08 4.21 15 4.13C14.82 3.96 14.62 3.82001 14.39 3.74001C14.16 3.65001 13.91 3.61 13.67 3.63Z" fill="currentColor"></path></g></svg>
+                        </div>
+                        <div class="label">重命名</div>
+                      </div>
+                      <div class="delete" @click="deletebt(item, num, index)">
+                        <div class="ds-icon" style="font-size: 24px; width: 24px; height: 24px;">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.3948 8.24785C5.89262 8.21027 6.32593 8.58498 6.36058 9.083L6.91194 17.0084V17.0423C6.91194 18.562 8.1119 19.8099 9.60009 19.8099H14.4119C15.905 19.8099 17.1001 18.563 17.1001 17.0423V17.009L17.6407 9.08428C17.6747 8.58626 18.1074 8.21098 18.6053 8.24783C19.099 8.28438 19.4706 8.71284 19.4369 9.20682L18.9 17.0774C18.8817 19.6322 16.8736 21.6849 14.4119 21.6849H9.60009C7.14544 21.6849 5.13073 19.6335 5.11207 17.0781L4.56455 9.20795C4.53019 8.71406 4.90112 8.28511 5.3948 8.24785Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M21 5.75C21 6.26777 20.5803 6.6875 20.0625 6.6875H3.9375C3.41973 6.6875 3 6.26777 3 5.75C3 5.23223 3.41973 4.8125 3.9375 4.8125H20.0625C20.5803 4.8125 21 5.23223 21 5.75Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M10.2 10.75C10.6971 10.75 11.1 11.1529 11.1 11.65L11.1 16.1C11.1 16.5971 10.6971 17 10.2 17C9.70299 17 9.30005 16.5971 9.30005 16.1L9.30005 11.65C9.30005 11.1529 9.70299 10.75 10.2 10.75Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M13.7999 10.75C14.297 10.75 14.6999 11.1529 14.6999 11.65L14.6999 16.1C14.6999 16.5971 14.297 17 13.7999 17C13.3028 17 12.8999 16.5971 12.8999 16.1L12.8999 11.65C12.8999 11.1529 13.3028 10.75 13.7999 10.75Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M9.37093 2.87988C9.53733 2.5331 9.88788 2.3125 10.2725 2.3125H13.7269C14.1114 2.3125 14.462 2.53305 14.6284 2.87977L15.8048 5.33074L14.1949 6.16926L13.2436 4.1875H10.7558L9.80489 6.16916L8.19482 5.33084L9.37093 2.87988Z" fill="currentColor"></path></svg>
+                        </div>
+                        <div class="label">删除</div>
+                      </div>
+                    </div>
+                  </teleport>
                 </div>
                 <div style="width: 100%;height: 24px;"></div>
-              </div>
+               </div>
             </div>
           </div>
         </div>
@@ -90,7 +100,7 @@
       </div> 
 
       <!-- 非展开状态 -->
-      <div v-else class="close sidebar-content">
+      <div v-show="!sidebarShow" class="close sidebar-content">
         <div class="top">
           <div class="logo" @click="sidebarButton">
             <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path id="path" d="M27.501 8.46875C27.249 8.3457 27.1406 8.58008 26.9932 8.69922C26.9434 8.73828 26.9004 8.78906 26.8584 8.83398C26.4902 9.22852 26.0605 9.48633 25.5 9.45508C24.6787 9.41016 23.9785 9.66797 23.3594 10.2969C23.2275 9.52148 22.79 9.05859 22.125 8.76172C21.7764 8.60742 21.4238 8.45312 21.1807 8.11719C21.0098 7.87891 20.9639 7.61328 20.8779 7.35156C20.8242 7.19336 20.7695 7.03125 20.5879 7.00391C20.3906 6.97266 20.3135 7.13867 20.2363 7.27734C19.9258 7.84375 19.8066 8.46875 19.8174 9.10156C19.8447 10.5234 20.4453 11.6562 21.6367 12.4629C21.7725 12.5547 21.8076 12.6484 21.7646 12.7832C21.6836 13.0605 21.5869 13.3301 21.501 13.6074C21.4473 13.7852 21.3662 13.8242 21.1768 13.7461C20.5225 13.4727 19.957 13.0684 19.458 12.5781C18.6104 11.7578 17.8438 10.8516 16.8877 10.1426C16.6631 9.97656 16.4395 9.82227 16.207 9.67578C15.2314 8.72656 16.335 7.94727 16.5898 7.85547C16.8574 7.75977 16.6826 7.42773 15.8193 7.43164C14.957 7.43555 14.167 7.72461 13.1611 8.10938C13.0137 8.16797 12.8594 8.21094 12.7002 8.24414C11.7871 8.07227 10.8389 8.0332 9.84766 8.14453C7.98242 8.35352 6.49219 9.23633 5.39648 10.7441C4.08105 12.5547 3.77148 14.6133 4.15039 16.7617C4.54883 19.0234 5.70215 20.8984 7.47559 22.3633C9.31348 23.8809 11.4307 24.625 13.8457 24.4824C15.3125 24.3984 16.9463 24.2012 18.7881 22.6406C19.2529 22.8711 19.7402 22.9629 20.5498 23.0332C21.1729 23.0918 21.7725 23.002 22.2373 22.9062C22.9648 22.752 22.9141 22.0781 22.6514 21.9531C20.5186 20.959 20.9863 21.3633 20.5605 21.0371C21.6445 19.752 23.2783 18.418 23.917 14.0977C23.9668 13.7539 23.9238 13.5391 23.917 13.2598C23.9131 13.0918 23.9512 13.0254 24.1445 13.0059C24.6787 12.9453 25.1973 12.7988 25.6738 12.5352C27.0557 11.7793 27.6123 10.5391 27.7441 9.05078C27.7637 8.82422 27.7402 8.58789 27.501 8.46875ZM15.46 21.8613C13.3926 20.2344 12.3906 19.6992 11.9766 19.7227C11.5898 19.7441 11.6592 20.1875 11.7441 20.4766C11.833 20.7617 11.9492 20.959 12.1123 21.209C12.2246 21.375 12.3018 21.623 12 21.8066C11.334 22.2207 10.1768 21.668 10.1221 21.6406C8.77539 20.8477 7.64941 19.7988 6.85547 18.3652C6.08984 16.9844 5.64453 15.5039 5.57129 13.9238C5.55176 13.541 5.66406 13.4062 6.04297 13.3379C6.54199 13.2461 7.05762 13.2266 7.55664 13.2988C9.66602 13.6074 11.4619 14.5527 12.9668 16.0469C13.8262 16.9004 14.4766 17.918 15.1465 18.9121C15.8584 19.9688 16.625 20.9746 17.6006 21.7988C17.9443 22.0879 18.2197 22.3086 18.4824 22.4707C17.6895 22.5586 16.3652 22.5781 15.46 21.8613ZM16.4502 15.4805C16.4502 15.3105 16.5859 15.1758 16.7568 15.1758C16.7949 15.1758 16.8301 15.1836 16.8613 15.1953C16.9033 15.2109 16.9424 15.2344 16.9727 15.2695C17.0273 15.3223 17.0586 15.4004 17.0586 15.4805C17.0586 15.6504 16.9229 15.7852 16.7529 15.7852C16.582 15.7852 16.4502 15.6504 16.4502 15.4805ZM19.5273 17.0625C19.3301 17.1426 19.1328 17.2129 18.9434 17.2207C18.6494 17.2344 18.3281 17.1152 18.1533 16.9688C17.8828 16.7422 17.6895 16.6152 17.6074 16.2168C17.5732 16.0469 17.5928 15.7852 17.623 15.6348C17.6934 15.3105 17.6152 15.1035 17.3877 14.9141C17.2012 14.7598 16.9658 14.7188 16.7061 14.7188C16.6094 14.7188 16.5205 14.6758 16.4541 14.6406C16.3457 14.5859 16.2568 14.4512 16.3418 14.2852C16.3691 14.2324 16.501 14.1016 16.5322 14.0781C16.8838 13.877 17.29 13.9434 17.666 14.0938C18.0146 14.2363 18.2773 14.498 18.6562 14.8672C19.0439 15.3145 19.1133 15.4395 19.334 15.7734C19.5078 16.0371 19.667 16.3066 19.7754 16.6152C19.8408 16.8066 19.7559 16.9648 19.5273 17.0625Z" fill-rule="nonzero" fill="#4D6BFE"></path></svg>
@@ -175,44 +185,44 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
+import type { ComputedRef } from 'vue'
 import router from '@/router';
 import { user_id } from '../api/login/login'
 import { getChat, deleteChat } from '../api/login/chat'
 import { UseHistoryStore } from '@/stores/chatData'
+import type { HistoryKey, HistoryItem, ChatContentItem } from '@/stores/chatData'
+import type { CSSProperties } from 'vue'
 
-
-const sidebarShow = ref(true);
+const sidebarShow = ref(false);
 const settingShow = ref(false);
 const HistoryStore = UseHistoryStore()
-const operationshow = ref(-1)
+const operationshow = ref('')
 
-const historyList = HistoryStore.getHistoryList()
+const historyList = computed(() => HistoryStore.getHistoryList() as Record<HistoryKey, HistoryItem>)
 
 //#region 
 // 判断历史数据内是否有内容
 const historyshow = () => {
-  let a = 0
-  for(let i in historyList){
-    a += historyList[i as keyof typeof historyList].list.length;
-    if(a > 0){
-      return true 
-    }else {
-      return false
+  let a = false
+  for (let i in historyList.value) {
+    if(historyList.value[i as HistoryKey].list.length > 0){
+      a = true
     }
   }
+  return a
 }
 //单条历史记录的具体内容获取
-const getHistorys = async (user_id:string, chat_id:string, index: Number, num: string) => {
+const getHistorys = async (user_id:string, chat_id:string, index: number, num: HistoryKey) => {
   try {
     const query1 = encodeURIComponent(user_id);
     const query2 = encodeURIComponent(chat_id);
     const data:any = await getChat(query1,query2)
     
     HistoryStore.setHistoryList('newCount',`${num}-${index}`, data[0].message)
-    console.log(data);
+    
     let a = 0
-    HistoryStore.getHistoryList()[num].list[index].content.forEach((obj: object) => {
+    HistoryStore.getHistoryList()[num as HistoryKey].list[index].content.forEach((obj: ChatContentItem) => {
       if(obj.role === 'deepseek'){
         if(data[0].reasoning[a]){
           obj.reasoning = data[0].reasoning[a]
@@ -244,14 +254,19 @@ const historySelect = async (options:any) => {
 
   router.push({ name: 'a', params: { chat_id: item.id}})
 }
-// 选择的历史记录数据保存到contentStore
-
 
 
 // 每条历史记录的改名及删除操作显示
-const operationbt = (item:any, index: number) => {
-  item.operation = true
-  operationshow.value = index
+const operationbt = (item:any, index: string) => {
+  if(operationshow.value === ''){
+    item.operation = true
+    operationshow.value = index
+  } else if(operationshow.value !== index) {
+    item.operation = true
+    operationshow.value = index  
+  } else {
+    operationshow.value =''  
+  }
 }
 // 重新命名按钮
 const rename = (item:any,num: string, index: number) => {
@@ -271,16 +286,63 @@ const settingButton = () => {
   settingShow.value = !settingShow.value;
 }
 const handleGlobalClick = (event:any) => {
-  operationshow.value = -1
-  settingShow.value = false;
+  const target = event.target as HTMLElement;
+
+  const isOperation = target.closest('.operation');
+  const isMethod = target.closest('.method');
+  const isHistoryItem = target.closest('.span');
+  const isSetting = target.closest('.my-setting, .setting-show');
+
+  // 核心修改：如果点击的是历史记录项且不在操作按钮上，则关闭菜单
+  if (isHistoryItem && !isOperation) {
+    operationshow.value = '';
+  } else if (!isOperation && !isMethod && !isHistoryItem) {
+    operationshow.value = '';
+  }
+  if (!isSetting) {
+    settingShow.value = false;
+  }
 }
 //#endregion
 
+//#region 样式
+const operationRefs = ref<Record<string, HTMLElement>>({});
+const methodRefs = ref<Record<string, HTMLElement>>({});
 
+const setOperationRef = (el: any, id: string) => {
+  if (el) {
+    operationRefs.value[`operation-${id}`] = el;
+  }
+};
+
+const setMethodRef = (el: any, id: string) => {
+  if (el) {
+    methodRefs.value[`method-${id}`] = el;
+  }
+};
+
+const getMethodStyle = (id: string): CSSProperties => {
+  const operationEl = operationRefs.value[`operation-${id}`];
+  if (!operationEl) return {};
+  
+  const operationRect = operationEl.getBoundingClientRect();
+  const recordEl = document.querySelector('.record');
+  const recordRect = recordEl?.getBoundingClientRect();
+  
+  if (!recordRect) return {};
+  
+  return {
+    position: 'absolute',
+    top: `${operationRect.top - recordRect.top + operationRect.height + 10}px`,
+    left: `${operationRect.left - recordRect.left}px`,
+    zIndex: 1000,
+  };
+};
+
+//#endregion
 
 onMounted(() => {
   document.addEventListener('click', handleGlobalClick);
-  historyshow()
 })
 onUnmounted(() => {
   document.removeEventListener('click', handleGlobalClick);
@@ -357,14 +419,16 @@ onUnmounted(() => {
         padding: 0px 10px;
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: center; 
+        position: relative;
         .history{
           width: 100%;
           height: 100%;
           display: flex; 
           flex-direction: column;
-          overflow-x: visible;
           overflow-y: auto;
+          transform: translateZ(0);
+          contain: unset;
           .group{
             width: 100%;
             .title{
@@ -397,72 +461,23 @@ onUnmounted(() => {
                 width: 24px;
                 height: 24px;
                 border-radius: 8px;
-                display: flex;
+                display: none;
                 justify-content: center;
               }
               .operation:hover{
                 background-color: #f9fbff; 
               }
-              .method{
-                width: 120px;
-                height: 102px;
-                color: rgb(64 64 64);
-                background-color: rgb(255 255 255);
-                border-radius: 12px;
-                box-shadow: rgba(0, 0, 0, 0.12) 0px 8px 24px 0px;
-                padding: 4px;
-                font-size: 14px;
-                font-family: Inter, system-ui, -apple-system, B;
-                z-index: 10;
-                position: absolute;
-                left: 90%;
-                top: 110%;
-                .name{
-                  width: 100%;
-                  height: 50%;
-                  border-radius: 12px;
-                  padding: 8px 16px 8px 8px;
-                  display: flex;
-                  align-items: center;
-                  cursor: pointer;
-                  .ds-icon{
-                    width: 24px;
-                    height: 24px;
-                    color: rgb(139, 139, 139);
-                    margin-right: 10px;
-                    svg{
-                      margin-bottom: 3px;
-                    }
-                  }
-                }
-                .name:hover{
-                  background-color: rgb(245 245 245);
-                }
-                .delete{
-                  width: 100%;
-                  height: 50%; 
-                  color: rgb(239 68 68);
-                  border-radius: 12px;
-                  display: flex;
-                  align-items: center;
-                  padding: 8px 16px 8px 8px;
-                  cursor: pointer;
-                  .ds-icon{
-                    width: 24px;
-                    height: 24px; 
-                    margin-right: 10px;
-                    svg{
-                      margin-bottom: 6px;
-                    }
-                  }
-                }
-              .delete:hover{
-                background-color: rgb(255, 241, 241); 
-              }
+              .operation-show{
+                display: flex;
+                justify-content: center;
+                align-items: center;
               }
             }
             .span:hover{
               background-color: rgb(239 246 255);
+              .operation{
+                display: flex;
+              }
             }
             .select{
               background-color: rgb(219 234 254);
@@ -474,6 +489,60 @@ onUnmounted(() => {
         }
         .history::-webkit-scrollbar {
           display: none; 
+        }
+        .method{
+          width: 120px;
+          height: 102px;
+          color: rgb(64 64 64);
+          background-color: rgb(255 255 255);
+          border-radius: 12px;
+          box-shadow: rgba(0, 0, 0, 0.12) 0px 8px 24px 0px;
+          padding: 4px;
+          font-size: 14px;
+          font-family: Inter, system-ui, -apple-system, B;
+          z-index: 20;
+          .name{
+            width: 100%;
+            height: 50%;
+            border-radius: 12px;
+            padding: 8px 16px 8px 8px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            .ds-icon{
+              width: 24px;
+              height: 24px;
+              color: rgb(139, 139, 139);
+              margin-right: 10px;
+              svg{
+                margin-bottom: 3px;
+              }
+            }
+          }
+          .name:hover{
+            background-color: rgb(245 245 245);
+          }
+          .delete{
+            width: 100%;
+            height: 50%; 
+            color: rgb(239 68 68);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            padding: 8px 16px 8px 8px;
+            cursor: pointer;
+            .ds-icon{
+              width: 24px;
+              height: 24px; 
+              margin-right: 10px;
+              svg{
+                margin-bottom: 6px;
+              }
+            }
+          }
+          .delete:hover{
+            background-color: rgb(255, 241, 241); 
+          }
         }
       }
       .footer{
