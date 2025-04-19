@@ -6,14 +6,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, onMounted } from 'vue';
 import Sidebar from './views/Sidebar.vue';
 import ChatSSE from './Utils/SSE.ts';
 import timeDifference  from './Utils/TimeDifference.ts'
 import { UseHistoryStore } from '@/stores/chatData.ts';
 import { user_id } from './api/login/login'
 import { getChat } from '@/api/login/chat';
+import { useRouter } from 'vue-router';
 
+const router = useRouter()
 //#region chatData赋值
 const HistoryStore = UseHistoryStore()
 
@@ -41,9 +43,7 @@ const getHistoryData = async () => {
     }else if(timeDifference(newItem) > 6){
       HistoryStore.setHistoryList('add','more',newItem)
     }
-    
   }
-  
     
 }
 
@@ -56,6 +56,17 @@ onMounted(async() => {
   // 当接收到'start'事件时，打印会话ID
   sse.on('start', (data) => {
     console.log('开始',data);
+
+    HistoryStore.setHistoryList('newData','today-0',{
+      id: JSON.parse(data).data.split(':')[1].trim(), 
+      date: JSON.parse(data).create_date
+    })
+    router.push({
+      name: 'a',
+      params: {
+        chat_id: JSON.parse(data).data.split(':')[1].trim(),
+      }
+    })
     HistoryStore.setischat(true)
   })
 
@@ -80,9 +91,9 @@ onMounted(async() => {
 
   // 当接收到'DONE'事件时，打印结束信息
   sse.on('DONE',async (data) => {
-    console.log('结束', data);    
+    console.log('结束', data); 
+
     HistoryStore.setischat(false)
-    
   })
   //#endregion
 

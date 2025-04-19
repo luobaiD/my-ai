@@ -7,9 +7,9 @@ import Utils from '@/Utils/Utils';
 //#region 类型定义
 export type HistoryKey = 'today' | 'yesterday' | 'thisWeek' | 'more'; // 合法的键名类型
 export type HistoryItem = {
-    title: string;
-    boolean: ComputedRef<any> | any;
-    list: any[]; // 根据实际情况替换 any
+  title: string;
+  boolean: ComputedRef<any> | any;
+  list: any[]; // 根据实际情况替换 any
 };
 export type ChatContentItem = {
   role: string;
@@ -23,22 +23,22 @@ export const UseHistoryStore = defineStore('History', () => {
   const historyList = ref<Record<HistoryKey, HistoryItem>>({
     today: {
       title: '今天',
-      boolean: computed(():boolean => historyList.value.today.list.length > 0),
-      list: []   
+      boolean: computed((): boolean => historyList.value.today.list.length > 0),
+      list: []
     },
     yesterday: {
       title: '昨天',
-      boolean: computed(():boolean => historyList.value.yesterday.list.length > 0),
-      list: []    
+      boolean: computed((): boolean => historyList.value.yesterday.list.length > 0),
+      list: []
     },
     thisWeek: {
       title: '本周',
-      boolean: computed(():boolean => historyList.value.thisWeek.list.length > 0),
+      boolean: computed((): boolean => historyList.value.thisWeek.list.length > 0),
       list: [],
     },
     more: {
       title: '更多',
-      boolean: computed(():boolean => historyList.value.more.list.length > 0),
+      boolean: computed((): boolean => historyList.value.more.list.length > 0),
       list: []
     }
   })
@@ -50,7 +50,7 @@ export const UseHistoryStore = defineStore('History', () => {
 
   //#region 读取侧边栏数据函数
   const getHistoryList = () => {
-      return historyList.value
+    return historyList.value
   }
   const getHistoryIndex = () => {
     return historyIndex.value
@@ -72,15 +72,26 @@ export const UseHistoryStore = defineStore('History', () => {
   const setHistoryList = (type: String, index: string, data?: any) => {
     const Index = index.split('-')
     switch (type) {
-      case 'add': 
-        if(Index[0]){
+      case 'add':
+        if (Index[0]) {
           historyList.value[Index[0] as HistoryKey].list.unshift(data)
         }
         break
+      case 'newData':
+        if (data.id) {
+          historyList.value[Index[0] as HistoryKey].list[Number(Index[1])].id = data.id
+        }
+        if (data.title) {
+          historyList.value[Index[0] as HistoryKey].list[Number(Index[1])].title = data.title
+        }
+        if (data.date) {
+          historyList.value[Index[0] as HistoryKey].list[Number(Index[1])].date = data.date.split('T')[0]
+        }
+        break
       case 'newCount':
-        if(Array.isArray(data)) {
+        if (Array.isArray(data)) {
           historyList.value[Index[0] as HistoryKey].list[Number(Index[1])].content = []
-          for(let i in data){
+          for (let i in data) {
             historyList.value[Index[0] as HistoryKey].list[Number(Index[1])].content.push(data[i as keyof typeof data])
           }
         } else {
@@ -88,16 +99,16 @@ export const UseHistoryStore = defineStore('History', () => {
         }
         break
       case 'fill':
-        if(data?.type == 'reasoning'){
+        if (data?.type == 'reasoning') {
           historyList.value[Index[0] as HistoryKey].list[Number(Index[1])].content.at(-1).reasoning += data.content
-        } else if(data?.type == 'content') {
+        } else if (data?.type == 'content') {
           historyList.value[Index[0] as HistoryKey].list[Number(Index[1])].content.at(-1).content += data.content
-        }        
+        }
         break
       case 'delete':
-        if(Index.length == 1){
+        if (Index.length == 1) {
           historyList.value[Index[0] as HistoryKey].list = []
-        } else if(Index.length == 2) {
+        } else if (Index.length == 2) {
           historyList.value[Index[0] as HistoryKey].list.splice(Number(Index[1]), 1)
         }
         break
@@ -109,7 +120,7 @@ export const UseHistoryStore = defineStore('History', () => {
   const setUnshiftData = (data: Object) => {
     historyList.value.today.list.unshift(data)
   }
-  const setHistoryIndex = (index: string,num:string) => {
+  const setHistoryIndex = (index: string, num: string) => {
     historyIndex.value = `${index}-${num}`
   }
   /**
@@ -119,9 +130,9 @@ export const UseHistoryStore = defineStore('History', () => {
     isChat.value = state
   }
   //#endregion
-  
-  
-  return { 
-    historyIndex, getHistoryList, getHistoryIndex, setHistoryIndex, setHistoryList, setUnshiftData, setischat 
+
+
+  return {
+    historyIndex, getHistoryList, getHistoryIndex, setHistoryIndex, setHistoryList, setUnshiftData, setischat
   }
 })

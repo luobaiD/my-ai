@@ -30,7 +30,7 @@
                 <div class="span" v-for="(item,index) in i.list" @click="historySelect({item, index, num})" :class="{select: HistoryStore.historyIndex == `${num}-${index}`}">
                   <span>{{ item.title }}</span>
                   <div class="operation" 
-                      @click="operationbt(item, `${num}-${index}`)" 
+                      @click.stop="operationbt(item, `${num}-${index}`)" 
                       :ref="el => setOperationRef(el, item.id)"
                       :style="{display: HistoryStore.historyIndex == `${num}-${index}`? 'flex' : 'none'}">
                       <div class="ds-icon" style="font-size: 16px; width: 16px; height: 16px;"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M3 12a2 2 0 1 1 4 0 2 2 0 0 1-4 0m7 0a2 2 0 1 1 4 0 2 2 0 0 1-4 0m7 0a2 2 0 1 1 4 0 2 2 0 0 1-4 0" clip-rule="evenodd"></path></svg></div>
@@ -464,6 +464,7 @@ onUnmounted(() => {
                 display: none;
                 justify-content: center;
               }
+
               .operation:hover{
                 background-color: #f9fbff; 
               }
@@ -476,7 +477,7 @@ onUnmounted(() => {
             .span:hover{
               background-color: rgb(239 246 255);
               .operation{
-                display: flex;
+                display: flex !important;
               }
             }
             .select{
